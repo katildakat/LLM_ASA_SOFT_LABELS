@@ -293,3 +293,4 @@ def make_ppl_prompts_chat(df, transcript_column, tokenizer):
         sample_to_prompt[sample] = sample_chat_string
     
     return sample_to_prompt
+

@@ -1,8 +1,10 @@
 import yaml
 import re
 import numpy as np
-from scipy.stats import entropy, spearmanr
+from scipy.stats import entropy
 from sklearn import metrics
+from scipy.stats import mannwhitneyu
+import matplotlib.pyplot as plt
 
 def load_config(config_path):
     with open(config_path, 'r') as file:
@@ -141,22 +143,106 @@ def print_results(results):
         acc_hard = metrics.accuracy_score(y_true, y_pred)
         mae_hard = macro_mae(y_true, y_pred)
         kappa_hard = metrics.cohen_kappa_score(y_true, y_pred, weights='quadratic')
-        cor_hard,p = spearmanr(y_true, y_pred)
-        if p > 0.05:
-            cor_hard=0
         
         # print rounded values
         print(f"Shot type: {shot_column}")
         print(f"S win rate: {s_win}/{out_of}")
-        print(f"Acc: {acc_hard:.2f}, F1: {f1_hard:.2f}, QWK: {kappa_hard:.2f}, MAE: {mae_hard:.2f}, Cor: {cor_hard:.2f}")
+        print("Average entropy: ", np.mean(results[f"{shot_column}_entropy"]))
+        print(f"Acc: {acc_hard:.2f}, F1: {f1_hard:.2f}, QWK: {kappa_hard:.2f}, MAE: {mae_hard:.2f}")
 
         f1_soft = metrics.f1_score(y_true, y_pred_soft_bin, average='macro')
         acc_soft = metrics.accuracy_score(y_true, y_pred_soft_bin)
         mae_soft = macro_mae(y_true, y_pred_soft_bin)
         kappa_soft = metrics.cohen_kappa_score(y_true, y_pred_soft_bin, weights='quadratic')
-        cor_soft,p = spearmanr(y_true, y_pred_soft_bin)
-        if p > 0.05:
-            cor_soft=0
         
         # print rounded values
-        print(f"Acc: {acc_soft:.2f}, F1: {f1_soft:.2f}, QWK: {kappa_soft:.2f}, MAE: {mae_soft:.2f}, Cor: {cor_soft:.2f}")
+        print(f"Acc: {acc_soft:.2f}, F1: {f1_soft:.2f}, QWK: {kappa_soft:.2f}, MAE: {mae_soft:.2f}")
+
+def plot_mean_distribution(data, prob_prefix='zero_shot_prompt_prob_', y_true_col='y_true', save_as_svg=False, cmap='viridis'):
+    # Filter columns for probability distributions
+    prob_cols = [col for col in data.columns if col.startswith(prob_prefix)]
+    
+    # Calculate the mean for each y_true value
+    mean_distributions = data.groupby(y_true_col)[prob_cols].mean()
+    
+    # Normalize color range from 1 to 7
+    norm = plt.Normalize(vmin=1, vmax=7)
+
+    # Plotting each y_true's mean distribution with gradually changing colors
+    fig, ax = plt.subplots(figsize=(6, 3))
+    for y_val in mean_distributions.index:
+        color = cmap(norm(y_val))
+        ax.plot(mean_distributions.columns.str.replace(prob_prefix, ''), 
+                mean_distributions.loc[y_val], 
+                label=f'y_true = {y_val}', 
+                color=color, 
+                linewidth=2.5,  # Make the line thicker
+                marker='o',     # Add points to the plot
+                markersize=6)   # Size of the markers
+    
+    # Adding color bar to indicate y_true gradient from 1 to 7
+    sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax, orientation='vertical')
+    cbar.set_label('y_true (1 to 7)')
+
+    # Plot aesthetics
+    ax.set_title(f'Mean Distribution of {prob_prefix} for Each y_true Label')
+    ax.set_xlabel('Probability Index')
+    ax.set_ylabel('Mean Probability')
+    ax.legend(loc='upper right', bbox_to_anchor=(1.15, 1))
+    ax.grid()
+    
+    # Save the plot as an SVG file if requested
+    if save_as_svg:
+        svg_filename=prob_prefix+'plot.svg'
+        plt.savefig(svg_filename, format='svg')
+    
+    # Show the plot
+    plt.show()
+
+def compare_distributions(results_df, split_column_1, split_column_2, columns_to_test):
+    """
+    Perform Mann-Whitney U tests to compare distributions for specified columns 
+    based on the difference between two split columns.
+    
+    Parameters:
+        results_df (pd.DataFrame): The input DataFrame.
+        split_column_1 (str): The first column used for comparison.
+        split_column_2 (str): The second column used for comparison.
+        columns_to_test (list): List of columns to test for distribution differences.
+    
+    Returns:
+        dict: A dictionary containing the test statistic and p-value for each tested column.
+    """
+    # Split the data based on whether the two split columns match
+    match_group = results_df[results_df[split_column_1] == results_df[split_column_2]]
+    non_match_group = results_df[results_df[split_column_1] != results_df[split_column_2]]
+
+    print(len(match_group), len(non_match_group))
+    
+    # Perform Mann-Whitney U tests for the specified columns
+    results = {}
+    for variable in columns_to_test:
+        # Extract the variable values for each group
+        match_group_var = match_group[variable]
+        non_match_group_var = non_match_group[variable]
+        print(variable)
+        print(match_group[variable].mean(), non_match_group[variable].mean())
+        
+        # Perform the Mann-Whitney U test
+        statistic, p_value = mannwhitneyu(match_group_var, non_match_group_var, alternative='two-sided')
+        
+        # Determine if the distributions are significantly different
+        significance = "yes" if p_value < 0.05 else "no"
+        
+        # Determine if the median of split_column_1 is larger than split_column_2
+        if significance == "yes":
+            median_comparison = "split_column_1 > split_column_2" if match_group_var.median() > non_match_group_var.median() else "split_column_1 <= split_column_2"
+        else:
+            median_comparison = "N/A"
+        
+        # Store the results
+        results[variable] = {'significance': significance, 'median_comparison': median_comparison}
+    
+    return results
