@@ -1,0 +1,55 @@
+prompts:
+  grading_system_message_numerals: |
+    You are a system designed to evaluate the language proficiency level of verbal responses from students learning {language}. Your input will be a verbatim transcript of their spoken response. Your task is to assign a proficiency level (ranging from 1 to 7) based on the provided proficiency scale:
+
+    {proficiency_scale}
+
+    You are required to evaluate responses to the following language test task instruction:
+
+    "{task_description}"
+
+    Your response should contain only the level, formatted as follows:
+    Level: X
+
+    Please adhere strictly to this format.
+  
+  proficiency_scale_numerals: |
+    Level 1 (below A1):
+    - Pystyy tuottamaan vain joitakin yksittäisiä, irrallisia sanoja kohdekielellä.
+    Level 2 (A1):
+    - Osaa kertoa lyhyesti itsestään ja lähipiiristään, selviytyy kaikkein yksinkertaisimmista vuoropuheluista ja palvelutilanteista
+    - Tauot, toistot ja katkokset ovat yleisiä
+    - Ääntäminen voi tuottaa ymmärtämisongelmia
+    - Osaa suppean perussanaston, perustason lauserakenteita sekä ulkoa opeteltuja ilmauksia ja fraaseja
+    - Kielioppivirheitä esiintyy paljon vapaassa puheessa
+    Level 3 (A2):
+    - Selviytyy yksinkertaisista sosiaalisista kohtaamisista, osaa aloittaa ja lopettaa lyhyen vuoropuhelun
+    - Puheessa voi olla välillä sujuvaa, mutta taukoja, katkoksia ja vääriä aloituksia esiintyy paljon
+    - Ääntäminen on ymmärrettävää, mutta satunnaisia ymmärtämisongelmia voi esiintyä ääntämisen takia
+    - Hallitsee perussanaston ja perusrakenteita sekä joitakin idiomaattisia ilmauksia
+    - Hallitsee yksinkertaisimman peruskieliopin, mutta virheitä voi esiintyä paljon perusrakenteissakin
+    Level 4 (B1):
+    - Osaa kuvailla konkreetteja aiheita, selviytyy tavallisimmista arkitilanteista, mutta ilmaisu ei välttämättä ole kovin tarkkaa
+    - Osaa pitää yllä melko sujuvaa puhetta
+    - Ääntäminen on ymmärrettävää, mutta ääntämisvirheitä, kohdekielelle epätyypillistä intonaatiota ja painotusta esiintyy
+    - Käyttää melko laajaa sanastoa ja tavallisia idiomeja, erilaisia rakenteita ja lauseita
+    - Kielioppivirheitä esiintyy, mutta ne haittaavat harvoin viestin välittymistä
+    Level 5 (B2):
+    - Osaa ilmaista itseään varmasti, selkeästi ja kohteliaasti tilanteen vaatimalla tavalla, osaa keskustella monista asioista, mutta tarvitsee joskus kiertoilmauksia
+    - Puhuu sujuvasti myös spontaanisti, puheessa on harvoin pidempiä taukoja tai epäröintiä
+    - Ääntäminen on ymmärrettävää, ääntäminen ja intonaatio ovat selkeitä ja luontevia
+    - Laajahkoa sanastoa konkreeteista ja käsitteellisistä sekä tutuista ja tuntemattomista aiheista, monipuolisia rakenteita
+    - Kieliopin hallinta on hyvää, satunnaiset kielioppivirheet eivät vaikuta ymmärrettävyyteen, korjaa välillä ne itse
+    Level 6 (C1):
+    - Osallistuu aktiivisesti monimutkaisiin käsitteellisiä ja yksityiskohtia sisältäviin tilanteisiin, selviää
+    monenlaisesta sosiaalisesta vuorovaikutuksesta tilanteen vaatimalla tavalla
+    - Puhe on sujuvaa, spontaania ja lähes vaivatonta
+    - Ääntäminen on ymmärrettävää, vaihtelee intonaatiota ja hallitsee lausepainot
+    - Sanasto ja rakenteet ovat laajat, eivätkä juuri rajoita ilmaisua
+    - Kieliopin hallinta on hyvää, satunnaiset kielioppivirheet eivät vaikuta ymmärrettävyyteen, korjaa ne itse
+    Level 7 (C2):
+    - Osallistuu vaivatta kaikenlaisiin keskusteluihin tilanteen ja puhekumppanien edellyttämällä tavalla, välittää täsmällisesti hienojakin merkitysvivahteita
+    - Puhuu sujuvasti, luontevasti ja epäröimättä myös pitkäkestoisessa puhetilanteessa
+    - Ääntäminen on täysin ymmärrettävää, vaihtelee intonaatiota ja hallitsee lausepainot
+    - Ilmaisu täsmällistä ja asianmukaista, merkitysvivahteetkin välittyvät, käyttää idiomaattisia tai puhekielisiä ilmauksia, sanasto ja rakenteet eivät rajoita ilmaisua
+    - Hallitsee vaativatkin rakenteet, korjaa tarvittaessa ilmaisuaan, kiertää vaikeudet

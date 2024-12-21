@@ -1,0 +1,7 @@
+fin_df_path : "data/fin_average_df.csv"
+model_name : "meta-llama/Meta-Llama-3-8B-Instruct"
+model_name_short : "llama3"
+assistant_message_start : "Level:"
+transcript_column : "w2v_transcript"
+random_seed : 42
+good_examples: True

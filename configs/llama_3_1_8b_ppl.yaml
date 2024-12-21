@@ -1,0 +1,21 @@
+languages: 
+  - fin
+  #- swe
+
+# Paths for different language datasets
+dataset_paths:
+  fin: "data/fin_average_df_examples_marked.csv"
+  #swe: "data/swe_average_df_examples_marked.csv"
+
+# Model settings
+model:
+  name: "meta-llama/Meta-Llama-3.1-8B-Instruct"
+  short_name: "llama3_1_8b"
+  llama_n : 3
+
+# Column names and other settings
+transcript_columns:
+  - w2v_transcript
+  - transcript_clean
+
+batch_size: 2
